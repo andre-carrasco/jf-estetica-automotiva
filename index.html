@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JF Estética Automotiva</title>
+<meta name="description" content="Orçamento e agendamento por WhatsApp da JF Estética Automotiva — lavagem de carro e moto, vidros, polimento e higienização de estofados.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:ital,wght@0,600;0,700;0,800;1,800;1,900&family=Manrope:wght@400;500;600;700;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: dark;
+    --bg:#0a0907;
+    --bg-elev:#161311;
+    --bg-elev-2:#201b18;
+    --line:#332d28;
+    --line-soft:#241f1b;
+    --red:#e10600;
+    --red-deep:#8b0000;
+    --red-glow:rgba(225,6,0,.35);
+    --chrome:#e2ddd6;
+    --chrome-dim:#9c948b;
+    --text:#f4efe8;
+    --text-dim:#a89f95;
+    --text-faint:#726a62;
+    --s1:4px;--s2:8px;--s3:12px;--s4:16px;--s5:24px;--s6:32px;--s7:48px;
+    --radius:14px;
+    --font-display:'Saira Condensed',system-ui,sans-serif;
+    --font-body:'Manrope',system-ui,-apple-system,sans-serif;
+    --font-script:'Caveat',cursive;
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    padding-left:16px;padding-right:16px;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:var(--font-display);
+    text-transform:uppercase;
+    font-weight:800;
+    font-style:italic;
+    letter-spacing:.01em;
+    margin:0;
+    text-wrap:balance;
+  }
+  p{margin:0;}
+  button{font-family:inherit;}
+  a{color:inherit;}
+
+  /* layout shell */
+  .wrap{max-width:560px;margin:0 auto;padding-bottom:140px;}
+
+  /* header */
+  .topbar{
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:30;
+    margin:0 -16px;padding:10px 16px;
+    background:rgba(10,9,7,.88);backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line-soft);
+    display:flex;align-items:center;gap:10px;
+  }
+  .topbar img{width:34px;height:34px;object-fit:contain;flex:none;}
+  .topbar .word{display:flex;flex-direction:column;line-height:1;}
+  .topbar .word b{font-family:var(--font-display);font-style:italic;font-weight:800;font-size:17px;letter-spacing:.02em;}
+  .topbar .word span{font-size:9px;letter-spacing:.16em;color:var(--text-dim);text-transform:uppercase;margin-top:2px;}
+  .topbar .loc{margin-left:auto;font-size:11px;color:var(--text-faint);text-align:right;line-height:1.3;}
+
+  /* hero */
+  .hero{padding:28px 0 18px;text-align:center;}
+  .hero .crest{width:96px;height:auto;margin:0 auto 10px;filter:drop-shadow(0 6px 18px var(--red-glow));}
+  .hero h1{font-size:34px;line-height:.95;background:linear-gradient(180deg,#fff, #b9b2a8 55%, #7d766d);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .hero .script{font-family:var(--font-script);color:var(--red);font-size:22px;margin-top:6px;transform:rotate(-1deg);}
+  .hero .sub{font-size:13px;color:var(--text-dim);max-width:38ch;margin:10px auto 0;}
+
+  /* tabs */
+  .tabs{
+    position:sticky;top:calc(env(safe-area-inset-top,0px) + 54px);z-index:25;
+    display:flex;gap:6px;margin:18px 0 20px;padding:4px;
+    background:var(--bg-elev);border:1px solid var(--line);border-radius:999px;
+  }
+  .tab{
+    flex:1;border:0;background:transparent;color:var(--text-dim);
+    padding:10px 8px;border-radius:999px;font-family:var(--font-display);
+    font-weight:800;font-style:italic;font-size:14px;letter-spacing:.03em;text-transform:uppercase;
+    cursor:pointer;transition:background .15s,color .15s;
+  }
+  .tab.active{background:linear-gradient(180deg,var(--red),var(--red-deep));color:#fff;box-shadow:0 4px 14px var(--red-glow);}
+
+  .panel[hidden]{display:none!important;}
+
+  /* section headings */
+  .section-head{display:flex;align-items:baseline;gap:8px;margin:26px 0 12px;}
+  .section-head .n{font-family:var(--font-display);font-weight:900;font-style:italic;color:var(--red-deep);font-size:13px;-webkit-text-stroke:1px var(--red);}
+  .section-head h2{font-size:21px;}
+  .section-head .bars{margin-left:auto;display:flex;gap:3px;}
+  .section-head .bars i{width:3px;height:14px;background:var(--red);opacity:.5;transform:skewX(-12deg);}
+  .section-head .bars i:nth-child(2){opacity:.8;}
+  .section-head .bars i:nth-child(3){opacity:1;}
+
+  /* card */
+  .card{
+    background:var(--bg-elev);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px;
+  }
+  .card .lead{font-size:12.5px;color:var(--text-dim);margin-bottom:12px;}
+
+  .field-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin:0 0 8px;font-weight:700;}
+
+  .pillgroup{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;}
+  .pillgroup.two{grid-template-columns:repeat(2,1fr);}
+  .pillgroup.one-col{grid-template-columns:1fr;}
+  .pill{position:relative;display:block;}
+  .pill input{position:absolute;opacity:0;inset:0;width:100%;height:100%;margin:0;cursor:pointer;}
+  .pill .box{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px;
+    border:1px solid var(--line);border-radius:10px;padding:10px 6px;min-height:56px;
+    background:var(--bg-elev-2);transition:border-color .15s,background .15s;
+  }
+  .pill .box b{font-size:13px;font-weight:700;}
+  .pill .box small{font-size:10.5px;color:var(--text-faint);}
+  .pill.is-checked .box{border-color:var(--red);background:linear-gradient(180deg,rgba(225,6,0,.16),rgba(225,6,0,.04));}
+  .pill.is-checked .box b{color:#fff;}
+  .pill input:focus-visible ~ .box{outline:2px solid var(--red);outline-offset:2px;}
+
+  .pill-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill-row .pill{flex:1;min-width:120px;}
+  .pill-row .box{flex-direction:row;justify-content:space-between;text-align:left;padding:12px;min-height:auto;}
+  .pill-row .box .t{display:flex;flex-direction:column;gap:1px;}
+  .pill-row .box .t b{font-size:13.5px;}
+  .pill-row .box .t small{font-size:10.5px;color:var(--text-faint);}
+  .pill-row .box .price{font-family:var(--font-display);font-weight:800;font-style:italic;color:var(--chrome);font-size:15px;white-space:nowrap;}
+  .pill-row .pill.is-checked .box .price{color:var(--red);}
+
+  details.info{margin:0 0 14px;}
+  details.info summary{
+    list-style:none;cursor:pointer;font-size:11.5px;color:var(--red);
+    display:flex;align-items:center;gap:5px;font-weight:700;
+  }
+  details.info summary::-webkit-details-marker{display:none;}
+  details.info summary .chev{transition:transform .15s;font-size:9px;}
+  details.info[open] summary .chev{transform:rotate(90deg);}
+  details.info .body{font-size:12px;color:var(--text-dim);padding:8px 0 0 0;border-top:1px dashed var(--line);margin-top:8px;}
+  details.info .body p + p{margin-top:6px;}
+  details.info .body b{color:var(--text);}
+
+  .check{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line-soft);cursor:pointer;}
+  .check:last-child{border-bottom:0;}
+  .check input{width:18px;height:18px;flex:none;accent-color:var(--red);}
+  .check .t{flex:1;font-size:13px;}
+  .check .t small{display:block;color:var(--text-faint);font-size:10.5px;}
+  .check .p{font-family:var(--font-display);font-weight:800;font-style:italic;font-size:14px;color:var(--chrome);}
+
+  .card-foot{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--line-soft);}
+  .card-foot .amt{font-family:var(--font-display);font-style:italic;font-weight:800;}
+  .card-foot .amt .lbl{display:block;font-family:var(--font-body);font-style:normal;font-weight:600;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);}
+  .card-foot .amt .val{font-size:22px;color:#fff;}
+  .card-foot .amt .val .from{font-family:var(--font-body);font-style:normal;font-weight:600;font-size:10px;color:var(--text-dim);text-transform:uppercase;margin-right:3px;}
+
+  .btn{
+    border:0;border-radius:10px;padding:11px 18px;font-weight:800;font-size:13.5px;
+    font-family:var(--font-display);font-style:italic;text-transform:uppercase;letter-spacing:.02em;
+    cursor:pointer;display:inline-flex;align-items:center;gap:6px;
+  }
+  .btn-add{background:linear-gradient(180deg,var(--red),var(--red-deep));color:#fff;box-shadow:0 4px 14px var(--red-glow);}
+  .btn-add:active{transform:translateY(1px);}
+  .btn-ghost{background:var(--bg-elev-2);color:var(--text-dim);border:1px solid var(--line);}
+
+  .note{font-size:11.5px;color:var(--text-faint);background:var(--bg-elev-2);border:1px solid var(--line-soft);border-radius:8px;padding:9px 10px;margin-top:10px;}
+  .note b{color:var(--chrome);}
+
+  /* toast */
+  .toast{
+    position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translate(-50%,-140%);
+    background:var(--chrome);color:#111;font-weight:700;font-size:12.5px;padding:9px 16px;border-radius:999px;
+    z-index:80;transition:transform .25s ease;box-shadow:0 8px 20px rgba(0,0,0,.4);white-space:nowrap;
+  }
+  .toast.show{transform:translate(-50%,0);}
+
+  /* cart bar */
+  .cartbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(0deg,var(--bg) 60%,transparent);
+    display:flex;justify-content:center;
+    transform:translateY(120%);transition:transform .25s ease;
+  }
+  .cartbar.show{transform:translateY(0);}
+  .cartbar .inner{
+    width:100%;max-width:560px;background:var(--bg-elev);border:1px solid var(--line);border-radius:14px;
+    padding:11px 12px;display:flex;align-items:center;gap:10px;cursor:pointer;
+    box-shadow:0 10px 30px rgba(0,0,0,.5);
+  }
+  .cartbar .cnt{
+    width:26px;height:26px;border-radius:50%;background:var(--red);color:#fff;font-size:12px;font-weight:800;
+    display:flex;align-items:center;justify-content:center;flex:none;
+  }
+  .cartbar .lbl{flex:1;min-width:0;}
+  .cartbar .lbl b{display:block;font-size:13px;}
+  .cartbar .lbl span{font-size:10.5px;color:var(--text-faint);}
+  .cartbar .total{font-family:var(--font-display);font-weight:800;font-style:italic;color:#fff;font-size:19px;white-space:nowrap;}
+
+  /* sheet */
+  .sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;opacity:0;pointer-events:none;transition:opacity .2s;}
+  .sheet-overlay.show{opacity:1;pointer-events:auto;}
+  .sheet{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;max-height:88vh;overflow-y:auto;
+    background:var(--bg-elev);border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+    padding:14px 16px calc(20px + env(safe-area-inset-bottom,0px));
+    transform:translateY(102%);transition:transform .28s ease;
+  }
+  .sheet.show{transform:translateY(0);}
+  .sheet .grabber{width:36px;height:4px;background:var(--line);border-radius:99px;margin:0 auto 12px;}
+  .sheet .shead{display:flex;align-items:center;margin-bottom:10px;}
+  .sheet .shead h3{font-size:19px;}
+  .sheet .shead button{margin-left:auto;background:none;border:0;color:var(--text-dim);font-size:20px;line-height:1;padding:4px;cursor:pointer;}
+
+  .cartline{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line-soft);}
+  .cartline .ic{width:30px;height:30px;border-radius:50%;background:var(--bg-elev-2);border:1px solid var(--line);flex:none;display:flex;align-items:center;justify-content:center;color:var(--red);}
+  .cartline .t{flex:1;min-width:0;font-size:13px;}
+  .cartline .t small{display:block;color:var(--text-faint);font-size:10.5px;}
+  .cartline .p{font-family:var(--font-display);font-weight:800;font-style:italic;font-size:14px;white-space:nowrap;}
+  .cartline .rm{background:none;border:0;color:var(--text-faint);font-size:16px;padding:4px 2px 4px 8px;cursor:pointer;}
+
+  .cart-total{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0 4px;}
+  .cart-total .lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);font-weight:700;}
+  .cart-total .val{font-family:var(--font-display);font-weight:900;font-style:italic;font-size:26px;color:#fff;}
+  .cart-total .val .from{font-family:var(--font-body);font-weight:600;font-style:normal;font-size:11px;color:var(--text-dim);}
+
+  .dategrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+  .daypill{border:1px solid var(--line);background:var(--bg-elev-2);border-radius:10px;padding:9px 4px;text-align:center;cursor:pointer;}
+  .daypill .wd{display:block;font-size:10px;letter-spacing:.06em;color:var(--text-faint);text-transform:uppercase;}
+  .daypill .dm{display:block;font-family:var(--font-display);font-weight:800;font-style:italic;font-size:16px;margin-top:1px;}
+  .daypill.sel{border-color:var(--red);background:linear-gradient(180deg,rgba(225,6,0,.18),rgba(225,6,0,.05));}
+  .daypill.sel .dm{color:var(--red);}
+
+  .periodrow{display:flex;gap:8px;margin-top:8px;}
+  .periodrow button{
+    flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-elev-2);
+    color:var(--text-dim);font-weight:700;font-size:13px;cursor:pointer;
+  }
+  .periodrow button.sel{border-color:var(--red);color:#fff;background:linear-gradient(180deg,rgba(225,6,0,.22),rgba(225,6,0,.06));}
+
+  .wa-link{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;
+    background:linear-gradient(180deg,var(--red),var(--red-deep));color:#fff;text-decoration:none;
+    border-radius:12px;padding:14px;font-family:var(--font-display);font-weight:800;font-style:italic;
+    font-size:16px;text-transform:uppercase;letter-spacing:.02em;box-shadow:0 8px 22px var(--red-glow);
+  }
+  .wa-link.disabled{pointer-events:none;opacity:.35;box-shadow:none;background:var(--bg-elev-2);color:var(--text-faint);}
+  .sheet .hint{text-align:center;font-size:11px;color:var(--text-faint);margin-top:8px;}
+  .empty-cart{text-align:center;padding:20px 0;color:var(--text-faint);font-size:13px;}
+
+  /* footer */
+  footer{margin-top:44px;padding:22px 0 30px;border-top:1px solid var(--line-soft);text-align:center;}
+  footer .fclose{font-family:var(--font-display);font-weight:900;font-style:italic;letter-spacing:.22em;font-size:12px;color:var(--chrome-dim);text-transform:uppercase;}
+  footer .fclose span{color:var(--red);}
+  footer .fmeta{margin-top:14px;font-size:12px;color:var(--text-dim);display:flex;flex-direction:column;gap:5px;}
+  footer .fmeta b{color:var(--text);}
+  footer .fhours{margin-top:12px;font-size:11px;color:var(--text-faint);max-width:36ch;margin-left:auto;margin-right:auto;}
+</style></head>
+<body>
+
+
+<div class="wrap">
+
+  <div class="topbar">
+    <img src="assets/logo.png" alt="JF Estética Automotiva">
+    <div class="word"><b>JF Estética</b><span>Automotiva</span></div>
+    <div class="loc">Potirendaba&nbsp;–&nbsp;SP<br>17&nbsp;99712-5855</div>
+  </div>
+
+  <div class="hero">
+    <img class="crest" src="assets/logo.png" alt="">
+    <h1>Seu carro em<br>boas mãos</h1>
+    <p class="script">cuidado que transforma, resultado que impressiona</p>
+    <p class="sub">Monte seu serviço, veja o valor e escolha o dia — o horário é sempre confirmado pelo nosso WhatsApp.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="auto" type="button">Estética Automotiva</button>
+    <button class="tab" data-tab="estofado" type="button">Estofados</button>
+  </div>
+
+  <!-- ================= TAB: AUTO ================= -->
+  <div class="panel" id="panel-auto">
+
+    <div class="section-head"><span class="n">01</span><h2>Lavagem de carro</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="card" id="card-carro">
+      <p class="field-label">Porte do veículo</p>
+      <div class="pillgroup" data-group="carroPorte">
+        <label class="pill"><input type="radio" name="carroPorte" value="0"><span class="box"><b>Pequeno</b><small>Hatch</small></span></label>
+        <label class="pill"><input type="radio" name="carroPorte" value="1"><span class="box"><b>Médio</b><small>Sedan</small></span></label>
+        <label class="pill"><input type="radio" name="carroPorte" value="2"><span class="box"><b>Grande</b><small>SUV / Pickup</small></span></label>
+      </div>
+
+      <p class="field-label">Tipo de lavagem</p>
+      <div class="pillgroup two" data-group="carroTipo">
+        <label class="pill"><input type="radio" name="carroTipo" value="simples"><span class="box"><b>Simples</b><small id="pr-simples">—</small></span></label>
+        <label class="pill"><input type="radio" name="carroTipo" value="completa"><span class="box"><b>Completa</b><small id="pr-completa">—</small></span></label>
+      </div>
+
+      <details class="info">
+        <summary><span class="chev">▶</span> O que inclui cada lavagem?</summary>
+        <div class="body">
+          <p><b>Simples:</b> pré-lavagem, lavagem com shampoo, caixas de roda, rodas e pneus, aspiração do interior e porta-malas, pano no painel, volante e portas.</p>
+          <p><b>Completa:</b> tudo isso + secagem com microfibra, pretinho nos pneus, limpeza de cantos e detalhes externos, limpeza de plásticos internos e tapetes, higienização básica do interior (produto bactericida).</p>
+          <p><b>Não inclui</b> em nenhuma delas: higienização de bancos, teto e carpete, nem descontaminação de vidros — são serviços à parte, logo abaixo.</p>
+        </div>
+      </details>
+
+      <div id="carro-adic" hidden>
+        <p class="field-label">Adicionar higienização interna? <span style="color:var(--text-faint);font-weight:400;text-transform:none;">(mesmo preço p/ qualquer porte)</span></p>
+        <label class="check"><input type="checkbox" data-adic="bancos"><span class="t">Bancos</span><span class="p">+R$ 120</span></label>
+        <label class="check"><input type="checkbox" data-adic="teto"><span class="t">Teto</span><span class="p">+R$ 80</span></label>
+        <label class="check"><input type="checkbox" data-adic="carpete"><span class="t">Carpete</span><span class="p">+R$ 100</span></label>
+      </div>
+
+      <div class="card-foot">
+        <div class="amt"><span class="lbl">Subtotal</span><span class="val" id="carro-total">R$ 0</span></div>
+        <button class="btn btn-add" id="carro-add" type="button" disabled>Adicionar</button>
+      </div>
+    </div>
+
+    <div class="section-head"><span class="n">02</span><h2>Higienização avulsa</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="card">
+      <p class="lead">Precisa só da higienização, sem lavagem completa junto? Pode pedir separado.</p>
+      <label class="check"><input type="checkbox" data-h="bancos"><span class="t">Higienização dos bancos</span><span class="p">R$ 120</span></label>
+      <label class="check"><input type="checkbox" data-h="teto"><span class="t">Higienização do teto</span><span class="p">R$ 80</span></label>
+      <label class="check"><input type="checkbox" data-h="carpete"><span class="t">Higienização do carpete</span><span class="p">R$ 100</span></label>
+      <div class="card-foot">
+        <div class="amt"><span class="lbl">Subtotal</span><span class="val" id="higi-total">R$ 0</span></div>
+        <button class="btn btn-add" id="higi-add" type="button" disabled>Adicionar</button>
+      </div>
+    </div>
+
+    <div class="section-head"><span class="n">03</span><h2>Vidros</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="card">
+      <p class="lead">Descontaminação de vidros — sempre um serviço à parte da lavagem.</p>
+      <div class="pillgroup one-col" data-group="vidro">
+        <label class="pill"><input type="radio" name="vidro" value="0"><span class="box" style="flex-direction:row;justify-content:space-between;text-align:left;"><span><b>Descontaminação</b></span><span style="font-family:var(--font-display);font-weight:800;font-style:italic;color:var(--chrome);">R$ 100</span></span></label>
+        <label class="pill"><input type="radio" name="vidro" value="1"><span class="box" style="flex-direction:row;justify-content:space-between;text-align:left;"><span><b>+ Proteção hidrorrepelente</b></span><span style="font-family:var(--font-display);font-weight:800;font-style:italic;color:var(--chrome);">R$ 130</span></span></label>
+      </div>
+      <div class="card-foot">
+        <div class="amt"><span class="lbl">Subtotal</span><span class="val" id="vidro-total">R$ 0</span></div>
+        <button class="btn btn-add" id="vidro-add" type="button" disabled>Adicionar</button>
+      </div>
+    </div>
+
+    <div class="section-head"><span class="n">04</span><h2>Polimento comercial</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="card">
+      <p class="lead">Polimento comercial: tira marcas de uso e devolve o brilho. Não é correção de risco profundo.</p>
+      <div class="pillgroup one-col" data-group="polimento">
+        <label class="pill"><input type="radio" name="polimento" value="0"><span class="box" style="flex-direction:row;justify-content:space-between;text-align:left;"><span><b>Polimento comercial</b></span><span style="font-family:var(--font-display);font-weight:800;font-style:italic;color:var(--chrome);">a partir de R$ 350</span></span></label>
+        <label class="pill"><input type="radio" name="polimento" value="1"><span class="box" style="flex-direction:row;justify-content:space-between;text-align:left;"><span><b>+ Cera blend</b></span><span style="font-family:var(--font-display);font-weight:800;font-style:italic;color:var(--chrome);">a partir de R$ 420</span></span></label>
+      </div>
+      <details class="info">
+        <summary><span class="chev">▶</span> O que inclui?</summary>
+        <div class="body"><p>Lavagem técnica, descontaminação da pintura (clay bar), polimento comercial, acabamento e brilho. Valor final depende do estado da pintura. <b>Vidro não incluso</b> — é o item acima.</p></div>
+      </details>
+      <div class="card-foot">
+        <div class="amt"><span class="lbl">Subtotal</span><span class="val" id="polimento-total">R$ 0</span></div>
+        <button class="btn btn-add" id="polimento-add" type="button" disabled>Adicionar</button>
+      </div>
+    </div>
+
+    <div class="section-head"><span class="n">05</span><h2>Moto</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="card">
+      <div class="pillgroup two" data-group="moto">
+        <label class="pill"><input type="radio" name="moto" value="0"><span class="box"><b>Simples</b><small>R$ 50</small></span></label>
+        <label class="pill"><input type="radio" name="moto" value="1"><span class="box"><b>Completa</b><small>R$ 80</small></span></label>
+      </div>
+      <details class="info">
+        <summary><span class="chev">▶</span> O que inclui cada uma?</summary>
+        <div class="body">
+          <p><b>Simples:</b> pré-lavagem, shampoo, pretinho nos pneus e revitalizador de plástico.</p>
+          <p><b>Completa:</b> tudo da simples + limpeza do kit relação + desmontagem da tampa lateral e do banco, com limpeza interna.</p>
+        </div>
+      </details>
+      <label class="check"><input type="checkbox" id="moto-verniz"><span class="t">Adicional: verniz de motor</span><span class="p">+R$ 50</span></label>
+      <div class="card-foot">
+        <div class="amt"><span class="lbl">Subtotal</span><span class="val" id="moto-total">R$ 0</span></div>
+        <button class="btn btn-add" id="moto-add" type="button" disabled>Adicionar</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ================= TAB: ESTOFADO ================= -->
+  <div class="panel" id="panel-estofado" hidden>
+
+    <div class="section-head"><span class="n">01</span><h2>Sofás e colchões</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="card">
+      <p class="lead">Higienização profissional com extratora e máquina de vapor.</p>
+
+      <p class="field-label">O que vamos higienizar?</p>
+      <div class="pillgroup two" data-group="estofTipo">
+        <label class="pill"><input type="radio" name="estofTipo" value="sofa"><span class="box"><b>Sofá</b></span></label>
+        <label class="pill"><input type="radio" name="estofTipo" value="colchao"><span class="box"><b>Colchão</b></span></label>
+      </div>
+
+      <div id="estof-tamanhos"></div>
+
+      <div class="note"><b>Sujeira pesada, manchas difíceis, pelos ou odor forte</b> podem levar um acréscimo de R$ 50 a R$ 100, avaliado no local.</div>
+
+      <div class="card-foot">
+        <div class="amt"><span class="lbl">Subtotal</span><span class="val" id="estof-total">R$ 0</span></div>
+        <button class="btn btn-add" id="estof-add" type="button" disabled>Adicionar</button>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <div class="fclose">Qualidade <span>·</span> Cuidado <span>·</span> Resultado</div>
+    <div class="fmeta">
+      <div><b>WhatsApp</b> (17) 99712-5855</div>
+      <div><b>Instagram</b> @esteticajf</div>
+      <div><b>Endereço</b> Leonel Chaves, 660 — Potirendaba/SP</div>
+    </div>
+    <p class="fhours">Atendimento das 6h às 18h, em dias alternados por semana — os dias disponíveis já aparecem certos na hora de escolher a data do seu pedido.</p>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="cartbar" id="cartbar">
+  <div class="inner" id="cartbar-inner">
+    <span class="cnt" id="cart-count">0</span>
+    <span class="lbl"><b>Ver pedido</b><span id="cart-sub">toque para continuar</span></span>
+    <span class="total" id="cart-bartotal">R$ 0</span>
+  </div>
+</div>
+
+<div class="sheet-overlay" id="overlay"></div>
+<div class="sheet" id="sheet">
+  <div class="grabber"></div>
+  <div class="shead"><h3>Seu pedido</h3><button id="sheet-close" type="button" aria-label="Fechar">&times;</button></div>
+
+  <div id="cart-list"></div>
+  <div class="cart-total"><span class="lbl">Total</span><span class="val" id="cart-modaltotal">R$ 0</span></div>
+
+  <p class="field-label" style="margin-top:14px;">Escolha o dia</p>
+  <div class="dategrid" id="dategrid"></div>
+
+  <p class="field-label" style="margin-top:14px;">Período</p>
+  <div class="periodrow">
+    <button type="button" data-period="Manhã">Manhã</button>
+    <button type="button" data-period="Tarde">Tarde</button>
+  </div>
+
+  <a class="wa-link disabled" id="wa-link" target="_blank" rel="noopener">
+    <span>Enviar pedido no WhatsApp</span>
+  </a>
+  <p class="hint">O horário exato é sempre confirmado por lá — isso aqui só organiza seu pedido.</p>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- catalog ---------- */
+  var CARRO_PORTES = [
+    {label:'Pequeno', sub:'Hatch', simples:60, completa:85},
+    {label:'Médio', sub:'Sedan', simples:85, completa:120},
+    {label:'Grande', sub:'SUV / Pickup', simples:100, completa:170}
+  ];
+  var ADICIONAIS = {bancos:120, teto:80, carpete:100};
+  var VIDRO = [
+    {label:'Descontaminação de vidros', price:100},
+    {label:'Descontaminação + proteção hidrorrepelente', price:130}
+  ];
+  var POLIMENTO = [
+    {label:'Polimento comercial', price:350},
+    {label:'Polimento comercial + cera blend', price:420}
+  ];
+  var MOTO = [
+    {label:'Lavagem de moto simples', price:50},
+    {label:'Lavagem de moto completa', price:80}
+  ];
+  var ESTOF = {
+    sofa: [
+      {label:'Sofá 2 lugares', price:180},
+      {label:'Sofá 3 lugares', price:230},
+      {label:'Sofá 4 lugares', price:280},
+      {label:'Sofá 5 lugares', price:330},
+      {label:'Sofá em L pequeno', price:350},
+      {label:'Sofá em L grande', price:400, approx:true}
+    ],
+    colchao: [
+      {label:'Colchão solteiro', price:180},
+      {label:'Colchão casal', price:230},
+      {label:'Colchão queen', price:280},
+      {label:'Colchão king', price:330}
+    ]
+  };
+
+  var fmt = function(n){ return 'R$ ' + n.toLocaleString('pt-BR'); };
+
+  /* ---------- pill / radio helpers ---------- */
+  function wirePillGroup(name, onChange){
+    var inputs = document.querySelectorAll('input[name="'+name+'"]');
+    inputs.forEach(function(inp){
+      inp.addEventListener('change', function(){
+        inputs.forEach(function(i){ i.closest('.pill').classList.toggle('is-checked', i.checked); });
+        onChange(inp.value);
+      });
+    });
+  }
+  function getChecked(name){
+    var el = document.querySelector('input[name="'+name+'"]:checked');
+    return el ? el.value : null;
+  }
+
+  /* ================= CARRO ================= */
+  var carroAdicBox = document.getElementById('carro-adic');
+  function updateCarroPrices(){
+    var porteIdx = getChecked('carroPorte');
+    if(porteIdx === null){
+      document.getElementById('pr-simples').textContent = '—';
+      document.getElementById('pr-completa').textContent = '—';
+    } else {
+      var p = CARRO_PORTES[+porteIdx];
+      document.getElementById('pr-simples').textContent = fmt(p.simples);
+      document.getElementById('pr-completa').textContent = fmt(p.completa);
+    }
+    recalcCarro();
+  }
+  function recalcCarro(){
+    var porteIdx = getChecked('carroPorte');
+    var tipo = getChecked('carroTipo');
+    carroAdicBox.hidden = (tipo !== 'completa');
+    var total = 0;
+    if(porteIdx !== null && tipo){
+      var p = CARRO_PORTES[+porteIdx];
+      total += (tipo === 'simples') ? p.simples : p.completa;
+      if(tipo === 'completa'){
+        carroAdicBox.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+          if(cb.checked) total += ADICIONAIS[cb.dataset.adic];
+        });
+      }
+    }
+    document.getElementById('carro-total').textContent = fmt(total);
+    document.getElementById('carro-add').disabled = !(porteIdx !== null && tipo);
+  }
+  wirePillGroup('carroPorte', updateCarroPrices);
+  wirePillGroup('carroTipo', recalcCarro);
+  carroAdicBox.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+    cb.addEventListener('change', recalcCarro);
+  });
+  document.getElementById('carro-add').addEventListener('click', function(){
+    var porteIdx = getChecked('carroPorte'), tipo = getChecked('carroTipo');
+    if(porteIdx === null || !tipo) return;
+    var p = CARRO_PORTES[+porteIdx];
+    var base = (tipo === 'simples') ? p.simples : p.completa;
+    addItem({icon:'car', label:'Lavagem '+(tipo==='simples'?'simples':'completa')+' — '+p.label+' ('+p.sub+')', price:base});
+    if(tipo === 'completa'){
+      carroAdicBox.querySelectorAll('input[type=checkbox]').forEach(function(cb){
+        if(cb.checked){
+          addItem({icon:'drop', label:'+ Higienização: '+cb.closest('.check').querySelector('.t').textContent, price:ADICIONAIS[cb.dataset.adic]});
+          cb.checked = false;
+        }
+      });
+    }
+    recalcCarro();
+    toast('Adicionado ao pedido');
+  });
+
+  /* ================= HIGIENIZAÇÃO AVULSA ================= */
+  var higiLabels = {bancos:'Higienização dos bancos', teto:'Higienização do teto', carpete:'Higienização do carpete'};
+  function recalcHigi(){
+    var total = 0;
+    document.querySelectorAll('input[data-h]').forEach(function(cb){ if(cb.checked) total += ADICIONAIS[cb.dataset.h]; });
+    document.getElementById('higi-total').textContent = fmt(total);
+    document.getElementById('higi-add').disabled = total === 0;
+  }
+  document.querySelectorAll('input[data-h]').forEach(function(cb){ cb.addEventListener('change', recalcHigi); });
+  document.getElementById('higi-add').addEventListener('click', function(){
+    document.querySelectorAll('input[data-h]').forEach(function(cb){
+      if(cb.checked){
+        addItem({icon:'drop', label:higiLabels[cb.dataset.h], price:ADICIONAIS[cb.dataset.h]});
+        cb.checked = false;
+      }
+    });
+    recalcHigi();
+    toast('Adicionado ao pedido');
+  });
+
+  /* ================= VIDROS ================= */
+  function recalcVidro(){
+    var idx = getChecked('vidro');
+    document.getElementById('vidro-total').textContent = fmt(idx===null?0:VIDRO[+idx].price);
+    document.getElementById('vidro-add').disabled = idx === null;
+  }
+  wirePillGroup('vidro', recalcVidro);
+  document.getElementById('vidro-add').addEventListener('click', function(){
+    var idx = getChecked('vidro'); if(idx===null) return;
+    addItem({icon:'drop', label:VIDRO[+idx].label, price:VIDRO[+idx].price});
+    toast('Adicionado ao pedido');
+  });
+
+  /* ================= POLIMENTO ================= */
+  function recalcPolimento(){
+    var idx = getChecked('polimento');
+    document.getElementById('polimento-total').textContent = (idx===null?'—':('a partir de '+fmt(POLIMENTO[+idx].price)));
+    document.getElementById('polimento-add').disabled = idx === null;
+  }
+  wirePillGroup('polimento', recalcPolimento);
+  document.getElementById('polimento-add').addEventListener('click', function(){
+    var idx = getChecked('polimento'); if(idx===null) return;
+    addItem({icon:'spark', label:POLIMENTO[+idx].label, price:POLIMENTO[+idx].price, approx:true});
+    toast('Adicionado ao pedido');
+  });
+
+  /* ================= MOTO ================= */
+  function recalcMoto(){
+    var idx = getChecked('moto');
+    var total = idx===null? 0 : MOTO[+idx].price;
+    if(document.getElementById('moto-verniz').checked) total += 50;
+    document.getElementById('moto-total').textContent = fmt(total);
+    document.getElementById('moto-add').disabled = idx === null;
+  }
+  wirePillGroup('moto', recalcMoto);
+  document.getElementById('moto-verniz').addEventListener('change', recalcMoto);
+  document.getElementById('moto-add').addEventListener('click', function(){
+    var idx = getChecked('moto'); if(idx===null) return;
+    addItem({icon:'bike', label:MOTO[+idx].label, price:MOTO[+idx].price});
+    if(document.getElementById('moto-verniz').checked){
+      addItem({icon:'bike', label:'+ Verniz de motor', price:50});
+      document.getElementById('moto-verniz').checked = false;
+    }
+    recalcMoto();
+    toast('Adicionado ao pedido');
+  });
+
+  /* ================= ESTOFADOS ================= */
+  var estofTamanhosBox = document.getElementById('estof-tamanhos');
+  function renderEstofSizes(){
+    var tipo = getChecked('estofTipo');
+    estofTamanhosBox.innerHTML = '';
+    if(!tipo){ recalcEstof(); return; }
+    var list = ESTOF[tipo];
+    var label = document.createElement('p'); label.className = 'field-label'; label.textContent = 'Tamanho';
+    var grid = document.createElement('div'); grid.className = 'pillgroup two'; grid.setAttribute('data-group','estofTam');
+    list.forEach(function(item, i){
+      var lab = document.createElement('label'); lab.className = 'pill';
+      lab.innerHTML = '<input type="radio" name="estofTam" value="'+i+'"><span class="box"><b>'+item.label.replace(/^(Sofá|Colchão)\s/,'')+'</b><small>'+(item.approx?'a partir de ':'')+fmt(item.price)+'</small></span>';
+      grid.appendChild(lab);
+    });
+    estofTamanhosBox.appendChild(label);
+    estofTamanhosBox.appendChild(grid);
+    wirePillGroup('estofTam', recalcEstof);
+    recalcEstof();
+  }
+  function recalcEstof(){
+    var tipo = getChecked('estofTipo');
+    var tamIdx = getChecked('estofTam');
+    var total = 0, ok = false, approx = false;
+    if(tipo && tamIdx !== null){
+      var item = ESTOF[tipo][+tamIdx];
+      total = item.price; approx = !!item.approx; ok = true;
+    }
+    document.getElementById('estof-total').textContent = (approx?'a partir de ':'') + fmt(total);
+    document.getElementById('estof-add').disabled = !ok;
+  }
+  wirePillGroup('estofTipo', renderEstofSizes);
+  document.getElementById('estof-add').addEventListener('click', function(){
+    var tipo = getChecked('estofTipo'); var tamIdx = getChecked('estofTam');
+    if(!tipo || tamIdx === null) return;
+    var item = ESTOF[tipo][+tamIdx];
+    addItem({icon:'sofa', label:item.label, price:item.price, approx:!!item.approx});
+    toast('Adicionado ao pedido');
+  });
+
+  /* ================= TABS ================= */
+  var tabs = document.querySelectorAll('.tab');
+  var panels = {auto:document.getElementById('panel-auto'), estofado:document.getElementById('panel-estofado')};
+  tabs.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      tabs.forEach(function(b){ b.classList.toggle('active', b===btn); });
+      Object.keys(panels).forEach(function(k){ panels[k].hidden = (k !== btn.dataset.tab); });
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+
+  /* ================= TOAST ================= */
+  var toastEl = document.getElementById('toast');
+  var toastTimer;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1600);
+  }
+
+  /* ================= CART ================= */
+  var ICONS = {
+    car:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 13l1.6-4.8A2 2 0 0 1 6.5 7h11a2 2 0 0 1 1.9 1.2L21 13"/><rect x="2.5" y="13" width="19" height="6" rx="1.5"/><circle cx="7" cy="19" r="1.6"/><circle cx="17" cy="19" r="1.6"/></svg>',
+    drop:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s7 8 7 13a7 7 0 0 1-14 0c0-5 7-13 7-13z"/></svg>',
+    spark:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3z"/></svg>',
+    bike:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.2"/><circle cx="18.5" cy="17.5" r="3.2"/><path d="M5.5 17.5l4-9h5l3 6M9.5 8.5H7M13 6l3 3"/></svg>',
+    sofa:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v4"/><path d="M3 12h18v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-5z"/><path d="M4 18v2M20 18v2"/></svg>'
+  };
+
+  var cart = [];
+  var uid = 0;
+  function addItem(item){
+    item.id = ++uid;
+    cart.push(item);
+    renderCart();
+  }
+  function removeItem(id){
+    cart = cart.filter(function(i){ return i.id !== id; });
+    renderCart();
+  }
+  function cartTotal(){
+    var sum = 0, approx = false;
+    cart.forEach(function(i){ sum += i.price; if(i.approx) approx = true; });
+    return {sum:sum, approx:approx};
+  }
+  var cartbar = document.getElementById('cartbar');
+  var cartList = document.getElementById('cart-list');
+  function renderCart(){
+    var t = cartTotal();
+    var totalStr = (t.approx?'a partir de ':'') + fmt(t.sum);
+    document.getElementById('cart-count').textContent = cart.length;
+    document.getElementById('cart-sub').textContent = cart.length + (cart.length===1?' item':' itens') + ' no pedido';
+    document.getElementById('cart-bartotal').textContent = totalStr;
+    document.getElementById('cart-modaltotal').textContent = totalStr;
+    cartbar.classList.toggle('show', cart.length > 0);
+
+    if(cart.length === 0){
+      cartList.innerHTML = '<div class="empty-cart">Seu pedido está vazio.</div>';
+    } else {
+      cartList.innerHTML = cart.map(function(i){
+        return '<div class="cartline"><span class="ic">'+ICONS[i.icon]+'</span>'+
+          '<span class="t">'+i.label+'</span>'+
+          '<span class="p">'+(i.approx?'a partir de ':'')+fmt(i.price)+'</span>'+
+          '<button class="rm" data-rm="'+i.id+'" aria-label="Remover">&times;</button></div>';
+      }).join('');
+      cartList.querySelectorAll('[data-rm]').forEach(function(b){
+        b.addEventListener('click', function(){ removeItem(+b.dataset.rm); });
+      });
+    }
+    updateWaLink();
+  }
+
+  /* ================= SHEET ================= */
+  var overlay = document.getElementById('overlay');
+  var sheet = document.getElementById('sheet');
+  function openSheet(){ overlay.classList.add('show'); sheet.classList.add('show'); }
+  function closeSheet(){ overlay.classList.remove('show'); sheet.classList.remove('show'); }
+  document.getElementById('cartbar-inner').addEventListener('click', openSheet);
+  document.getElementById('sheet-close').addEventListener('click', closeSheet);
+  overlay.addEventListener('click', closeSheet);
+
+  /* ================= SCHEDULE ================= */
+  var REF_MONDAY = new Date(2026, 8, 21); REF_MONDAY.setHours(0,0,0,0);
+  var WEEK_A = [1,3,5,0], WEEK_B = [2,4,6];
+  var WD = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  function mondayOf(d){
+    var day = (d.getDay()+6)%7;
+    var m = new Date(d); m.setDate(d.getDate()-day); m.setHours(0,0,0,0);
+    return m;
+  }
+  function isServiceDay(d){
+    var mon = mondayOf(d);
+    var weeks = Math.round((mon-REF_MONDAY)/(7*86400000));
+    var pattern = ((((weeks%2)+2)%2)===0) ? WEEK_A : WEEK_B;
+    return pattern.indexOf(d.getDay()) !== -1;
+  }
+  var selectedDate = null, selectedPeriod = null;
+  var dategrid = document.getElementById('dategrid');
+  (function buildDateGrid(){
+    var today = new Date(); today.setHours(0,0,0,0);
+    var found = 0, i = 0, first = null;
+    while(found < 9 && i < 40){
+      var d = new Date(today); d.setDate(today.getDate()+i);
+      if(isServiceDay(d)){
+        found++;
+        (function(d){
+          var el = document.createElement('div');
+          el.className = 'daypill';
+          el.innerHTML = '<span class="wd">'+WD[d.getDay()]+'</span><span class="dm">'+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'</span>';
+          el.addEventListener('click', function(){
+            dategrid.querySelectorAll('.daypill').forEach(function(p){ p.classList.remove('sel'); });
+            el.classList.add('sel');
+            selectedDate = d;
+            updateWaLink();
+          });
+          dategrid.appendChild(el);
+          if(!first) first = el;
+        })(d);
+      }
+      i++;
+    }
+  })();
+
+  document.querySelectorAll('.periodrow button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.periodrow button').forEach(function(b){ b.classList.remove('sel'); });
+      btn.classList.add('sel');
+      selectedPeriod = btn.dataset.period;
+      updateWaLink();
+    });
+  });
+
+  /* ================= WHATSAPP LINK ================= */
+  var waLink = document.getElementById('wa-link');
+  function updateWaLink(){
+    var ok = cart.length > 0 && selectedDate && selectedPeriod;
+    waLink.classList.toggle('disabled', !ok);
+    if(!ok){ waLink.removeAttribute('href'); return; }
+    var t = cartTotal();
+    var lines = ['Olá! Vim pelo link e quero fazer um orçamento/agendamento:',''];
+    cart.forEach(function(i){ lines.push('• '+i.label+' — '+(i.approx?'a partir de ':'')+fmt(i.price)); });
+    lines.push('');
+    lines.push('Total: '+(t.approx?'a partir de ':'')+fmt(t.sum));
+    lines.push('');
+    lines.push('Dia: '+WD[selectedDate.getDay()]+' ('+String(selectedDate.getDate()).padStart(2,'0')+'/'+String(selectedDate.getMonth()+1).padStart(2,'0')+')');
+    lines.push('Período: '+selectedPeriod);
+    lines.push('');
+    lines.push('Aguardo a confirmação do horário. Obrigado!');
+    var text = encodeURIComponent(lines.join('\n'));
+    waLink.href = 'https://wa.me/5517997125855?text='+text;
+  }
+
+  renderCart();
+})();
+</script>
+
+</body>
+</html>
