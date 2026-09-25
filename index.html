@@ -759,7 +759,7 @@
 
   /* ================= SCHEDULE ================= */
   var REF_MONDAY = new Date(2026, 8, 21); REF_MONDAY.setHours(0,0,0,0);
-  var WEEK_A = [1,3,5,0], WEEK_B = [2,4,6];
+  var WEEK_SEG_QUA_SEX_DOM = [1,3,5,0], WEEK_TER_QUI_SAB = [2,4,6];
   var WD = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   function mondayOf(d){
     var day = (d.getDay()+6)%7;
@@ -769,7 +769,9 @@
   function isServiceDay(d){
     var mon = mondayOf(d);
     var weeks = Math.round((mon-REF_MONDAY)/(7*86400000));
-    var pattern = ((((weeks%2)+2)%2)===0) ? WEEK_A : WEEK_B;
+    // na semana de referência (21/09) ele está no outro trabalho seg/qua/sex/dom,
+    // então a estética atende ter/qui/sáb nessa semana, alternando a partir daí.
+    var pattern = ((((weeks%2)+2)%2)===0) ? WEEK_TER_QUI_SAB : WEEK_SEG_QUA_SEX_DOM;
     return pattern.indexOf(d.getDay()) !== -1;
   }
   var selectedDate = null, selectedPeriod = null;
