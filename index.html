@@ -235,6 +235,7 @@
   .daypill .dm{display:block;font-family:var(--font-display);font-weight:800;font-style:italic;font-size:16px;margin-top:1px;}
   .daypill.sel{border-color:var(--red);background:linear-gradient(180deg,rgba(225,6,0,.18),rgba(225,6,0,.05));}
   .daypill.sel .dm{color:var(--red);}
+  .daypill.full{opacity:.35;pointer-events:none;}
 
   .periodrow{display:flex;gap:8px;margin-top:8px;}
   .periodrow button{
@@ -242,9 +243,11 @@
     color:var(--text-dim);font-weight:700;font-size:13px;cursor:pointer;
   }
   .periodrow button.sel{border-color:var(--red);color:#fff;background:linear-gradient(180deg,rgba(225,6,0,.22),rgba(225,6,0,.06));}
+  .periodrow button.taken,.periodrow button:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed;}
 
   .wa-link{
     display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:16px;
+    border:0;cursor:pointer;
     background:linear-gradient(180deg,var(--red),var(--red-deep));color:#fff;text-decoration:none;
     border-radius:12px;padding:14px;font-family:var(--font-display);font-weight:800;font-style:italic;
     font-size:16px;text-transform:uppercase;letter-spacing:.02em;box-shadow:0 8px 22px var(--red-glow);
@@ -305,13 +308,14 @@
         <summary><span class="chev">▶</span> O que inclui cada lavagem?</summary>
         <div class="body">
           <p><b>Simples:</b> pré-lavagem, lavagem com shampoo, caixas de roda, rodas e pneus, aspiração do interior e porta-malas, pano no painel, volante e portas.</p>
-          <p><b>Completa:</b> tudo isso + secagem com microfibra, pretinho nos pneus, limpeza de cantos e detalhes externos, limpeza de plásticos internos e tapetes, higienização básica do interior (produto bactericida).</p>
-          <p><b>Não inclui</b> em nenhuma delas: higienização de bancos, teto e carpete, nem descontaminação de vidros — são serviços à parte, logo abaixo.</p>
+          <p><b>Completa:</b> tudo isso + secagem com microfibra, pretinho nos pneus, limpeza de cantos e detalhes externos. Por dentro, a higienização é a <b>convencional</b>: limpeza de painel, portas, cantos, carpetes e demais superfícies, removendo a sujeira que está na superfície.</p>
+          <p><b>Não inclui</b> em nenhuma delas: Higienização com Extratora (bancos, teto e carpete) nem descontaminação de vidros — são serviços à parte, logo abaixo.</p>
         </div>
       </details>
 
       <div id="carro-adic" hidden>
-        <p class="field-label">Adicionar higienização interna? <span style="color:var(--text-faint);font-weight:400;text-transform:none;">(mesmo preço p/ qualquer porte)</span></p>
+        <p class="field-label">Adicionar Higienização com Extratora? <span style="color:var(--text-faint);font-weight:400;text-transform:none;">(mesmo preço p/ qualquer porte)</span></p>
+        <p class="lead" style="margin-top:-6px;">Indicada pra sujeira impregnada, manchas ou odor — usa extratora pra extrair sujeira e umidade de bancos, teto e carpete.</p>
         <label class="check"><input type="checkbox" data-adic="bancos"><span class="t">Bancos</span><span class="p">+R$ 120</span></label>
         <label class="check"><input type="checkbox" data-adic="teto"><span class="t">Teto</span><span class="p">+R$ 80</span></label>
         <label class="check"><input type="checkbox" data-adic="carpete"><span class="t">Carpete</span><span class="p">+R$ 100</span></label>
@@ -323,9 +327,9 @@
       </div>
     </div>
 
-    <div class="section-head"><span class="n">02</span><h2>Higienização avulsa</h2><span class="bars"><i></i><i></i><i></i></span></div>
+    <div class="section-head"><span class="n">02</span><h2>Higienização com Extratora</h2><span class="bars"><i></i><i></i><i></i></span></div>
     <div class="card">
-      <p class="lead">Precisa só da higienização, sem lavagem completa junto? Pode pedir separado.</p>
+      <p class="lead">Limpeza profunda de bancos, teto e carpete com extratora — indicada pra sujeira impregnada, manchas ou odor. É diferente da higienização convencional que já vem na lavagem completa. Precisa só dela, sem lavagem completa junto? Pode pedir separado.</p>
       <label class="check"><input type="checkbox" data-h="bancos"><span class="t">Higienização dos bancos</span><span class="p">R$ 120</span></label>
       <label class="check"><input type="checkbox" data-h="teto"><span class="t">Higienização do teto</span><span class="p">R$ 80</span></label>
       <label class="check"><input type="checkbox" data-h="carpete"><span class="t">Higienização do carpete</span><span class="p">R$ 100</span></label>
@@ -450,9 +454,9 @@
     <button type="button" data-period="Tarde">Tarde</button>
   </div>
 
-  <a class="wa-link disabled" id="wa-link" target="_blank" rel="noopener">
-    <span>Enviar pedido no WhatsApp</span>
-  </a>
+  <button class="wa-link disabled" id="wa-link" type="button" disabled>
+    <span id="wa-link-label">Enviar pedido no WhatsApp</span>
+  </button>
   <p class="hint">O horário exato é sempre confirmado por lá — isso aqui só organiza seu pedido.</p>
 </div>
 
@@ -746,10 +750,58 @@
     updateWaLink();
   }
 
+  /* ================= DISPONIBILIDADE (Neon Data API) ================= */
+  var DATA_API_URL = 'https://ep-wild-band-b4kly292.apirest.c-6.us-east-2.aws.neon.tech/jf_estetica/rest/v1';
+  var AUTH_URL = 'https://ep-wild-band-b4kly292.neonauth.c-6.us-east-2.aws.neon.tech/jf_estetica/auth';
+
+  var anonToken = null, anonTokenExp = 0;
+  function getAnonToken(){
+    if(anonToken && anonTokenExp - (Date.now()/1000) > 30) return Promise.resolve(anonToken);
+    return fetch(AUTH_URL + '/token/anonymous').then(function(r){ return r.json(); }).then(function(j){
+      anonToken = j.token; anonTokenExp = j.expires_at;
+      return anonToken;
+    });
+  }
+
+  function dateKey(d){
+    return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  }
+
+  var taken = {}; /* { 'AAAA-MM-DD': {Manhã:true, Tarde:true} } */
+  function isTaken(d, periodo){
+    var slot = taken[dateKey(d)];
+    return !!(slot && slot[periodo]);
+  }
+  function markTaken(d, periodo){
+    var k = dateKey(d);
+    if(!taken[k]) taken[k] = {};
+    taken[k][periodo] = true;
+  }
+  function refreshAvailability(dates){
+    if(!dates.length) return Promise.resolve();
+    var from = dateKey(dates[0]), to = dateKey(dates[dates.length-1]);
+    return getAnonToken().then(function(tok){
+      return fetch(DATA_API_URL + '/agendamentos?select=dia,periodo&dia=gte.'+from+'&dia=lte.'+to, {
+        headers: {'Authorization':'Bearer '+tok}
+      });
+    }).then(function(r){ return r.ok ? r.json() : []; }).then(function(rows){
+      rows.forEach(function(row){
+        if(!taken[row.dia]) taken[row.dia] = {};
+        taken[row.dia][row.periodo] = true;
+      });
+    }).catch(function(){ /* sem internet/API fora do ar: segue sem travar a UI */ });
+  }
+
   /* ================= SHEET ================= */
   var overlay = document.getElementById('overlay');
   var sheet = document.getElementById('sheet');
-  function openSheet(){ overlay.classList.add('show'); sheet.classList.add('show'); }
+  function openSheet(){
+    overlay.classList.add('show'); sheet.classList.add('show');
+    refreshAvailability(dayPills.map(function(p){ return p.date; })).then(function(){
+      applyAvailabilityToGrid();
+      applyPeriodAvailability();
+    });
+  }
   function closeSheet(){ overlay.classList.remove('show'); sheet.classList.remove('show'); }
   document.getElementById('cartbar-inner').addEventListener('click', openSheet);
   document.getElementById('sheet-close').addEventListener('click', closeSheet);
@@ -774,6 +826,31 @@
   }
   var selectedDate = null, selectedPeriod = null;
   var dategrid = document.getElementById('dategrid');
+  var dayPills = [];
+  function applyAvailabilityToGrid(){
+    dayPills.forEach(function(item){
+      var full = isTaken(item.date,'Manhã') && isTaken(item.date,'Tarde');
+      item.el.classList.toggle('full', full);
+      if(full && selectedDate && dateKey(selectedDate) === dateKey(item.date)){
+        item.el.classList.remove('sel');
+        selectedDate = null;
+        selectedPeriod = null;
+      }
+    });
+  }
+  function applyPeriodAvailability(){
+    document.querySelectorAll('.periodrow button').forEach(function(btn){
+      var p = btn.dataset.period;
+      var blocked = !!(selectedDate && isTaken(selectedDate, p));
+      btn.disabled = blocked;
+      btn.classList.toggle('taken', blocked);
+      if(blocked && selectedPeriod === p){
+        selectedPeriod = null;
+        btn.classList.remove('sel');
+      }
+    });
+    updateWaLink();
+  }
   (function buildDateGrid(){
     var today = new Date(); today.setHours(0,0,0,0);
     var found = 0, i = 0, first = null;
@@ -786,21 +863,31 @@
           el.className = 'daypill';
           el.innerHTML = '<span class="wd">'+WD[d.getDay()]+'</span><span class="dm">'+String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0')+'</span>';
           el.addEventListener('click', function(){
+            if(el.classList.contains('full')) return;
             dategrid.querySelectorAll('.daypill').forEach(function(p){ p.classList.remove('sel'); });
             el.classList.add('sel');
             selectedDate = d;
+            selectedPeriod = null;
+            document.querySelectorAll('.periodrow button').forEach(function(b){ b.classList.remove('sel'); });
+            applyPeriodAvailability();
             updateWaLink();
           });
           dategrid.appendChild(el);
+          dayPills.push({date:d, el:el});
           if(!first) first = el;
         })(d);
       }
       i++;
     }
+    refreshAvailability(dayPills.map(function(p){ return p.date; })).then(function(){
+      applyAvailabilityToGrid();
+      applyPeriodAvailability();
+    });
   })();
 
   document.querySelectorAll('.periodrow button').forEach(function(btn){
     btn.addEventListener('click', function(){
+      if(btn.disabled) return;
       document.querySelectorAll('.periodrow button').forEach(function(b){ b.classList.remove('sel'); });
       btn.classList.add('sel');
       selectedPeriod = btn.dataset.period;
@@ -810,10 +897,14 @@
 
   /* ================= WHATSAPP LINK ================= */
   var waLink = document.getElementById('wa-link');
+  var waLabel = document.getElementById('wa-link-label');
+  var waBusy = false;
   function updateWaLink(){
-    var ok = cart.length > 0 && selectedDate && selectedPeriod;
+    var ok = cart.length > 0 && selectedDate && selectedPeriod && !waBusy;
     waLink.classList.toggle('disabled', !ok);
-    if(!ok){ waLink.removeAttribute('href'); return; }
+    waLink.disabled = !ok;
+  }
+  function buildWaMessage(){
     var t = cartTotal();
     var lines = ['Olá! Vim pelo link e quero fazer um orçamento/agendamento:',''];
     cart.forEach(function(i){ lines.push('• '+i.label+' — '+(i.approx?'a partir de ':'')+fmt(i.price)); });
@@ -824,9 +915,40 @@
     lines.push('Período: '+selectedPeriod);
     lines.push('');
     lines.push('Aguardo a confirmação do horário. Obrigado!');
-    var text = encodeURIComponent(lines.join('\n'));
-    waLink.href = 'https://wa.me/5517997125855?text='+text;
+    return lines.join('\n');
   }
+  waLink.addEventListener('click', function(){
+    if(waLink.disabled || waBusy) return;
+    var dia = selectedDate, periodo = selectedPeriod;
+    waBusy = true;
+    updateWaLink();
+    waLabel.textContent = 'Reservando...';
+    getAnonToken().then(function(tok){
+      return fetch(DATA_API_URL + '/agendamentos', {
+        method:'POST',
+        headers:{'Authorization':'Bearer '+tok, 'Content-Type':'application/json', 'Prefer':'return=minimal'},
+        body: JSON.stringify({dia: dateKey(dia), periodo: periodo, resumo: cart.map(function(i){ return i.label; }).join(' + ').slice(0,500)})
+      });
+    }).then(function(r){
+      if(r.ok){
+        window.open('https://wa.me/5517997125855?text='+encodeURIComponent(buildWaMessage()), '_blank', 'noopener');
+        markTaken(dia, periodo);
+        applyAvailabilityToGrid();
+        applyPeriodAvailability();
+      } else {
+        toast('Esse horário acabou de ser reservado agora. Escolha outro.');
+        markTaken(dia, periodo);
+        applyAvailabilityToGrid();
+        applyPeriodAvailability();
+      }
+    }).catch(function(){
+      toast('Não deu pra confirmar a reserva. Tenta de novo.');
+    }).finally(function(){
+      waBusy = false;
+      waLabel.textContent = 'Enviar pedido no WhatsApp';
+      updateWaLink();
+    });
+  });
 
   renderCart();
 })();
